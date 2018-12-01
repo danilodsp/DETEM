@@ -1,0 +1,57 @@
+f=imread('Fig0327(a)(tungsten_original).tif');
+E=4;
+k0=0.4;
+k1=0.02;
+k2=0.4;
+[M,N]=size(f);
+
+
+
+g=zeros(M,N);
+g=im2uint8(g);
+
+
+%media global
+mgf=sum(f(:))/numel(f);
+
+%variancia global
+var=sum((f(:)-mgf).^2)/numel(f);
+
+fl=padarray(f,[2 2],'symmetric','both');
+
+for i=1:1:M
+    for j=1:1:N
+        %media local 'mloc' em uma vizinhanca 3x3
+        mloc=zeros(1,9);
+        count=0;
+        for x=-1:1:1
+            for y=-1:1:1
+                count=count+1;
+                mloc(count)=fl(i+2+x,j+2+y);
+            end
+        end
+        mlocf=sum(mloc(:))/9;
+        %variancia local vl
+      
+        vl=zeros(1,9);
+        count2=0;
+        for x=-1:1:1
+            for y=-1:1:1
+                count2=count2+1;
+                vl(count2)=fl(i+2+x,j+2+y);
+            end
+        end
+        vlf=sum((vl(:)-mlocf).^2)/9;
+        
+        %transformacao de contraste desejada
+       
+        if (mlocf<=k0*mgf) && (vlf>=k1*var) && (vlf<=k2*var);
+            g(i,j)=E*fl(i+2,j+2);
+            
+        else
+            g(i,j)=fl(i+2,j+2);
+        end
+    
+    end
+end
+imshowpair(f,g,'montage')
