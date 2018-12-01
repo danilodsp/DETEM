@@ -1,0 +1,18 @@
+function s=ajusteimag(r,low_in,high_in,low_out, high_out,gama)
+%AJUSTEIMAG S uma versao propria do comando imadjust;
+x=mat2gray(r);
+[M,N]=size(r);
+b=zeros(M,N);
+for i=1:1:N
+    for y=1:1:M
+        if x(y,i)>high_in
+            b(y,i)=high_out;
+        elseif x(y,i)<low_in
+            b(y,i)=low_out;
+        else
+             b(y,i)=x(y,i)^gama;
+        end
+    end
+end
+
+s=im2uint8(b);
